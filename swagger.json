@@ -1,0 +1,110 @@
+{
+  "info": {
+    "title": "OCEM Quiz",
+    "version": "1.0.0",
+    "description": "API for ocemQ"
+  },
+  "basePath": "/",
+  "swagger": "2.0",
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "summary": "User Register",
+        "description": "User Registration",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "username",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "password",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "summary": "User Login",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "password",
+            "type": "string",
+            "required": true
+          }
+        ],
+        "description": "Use to return your name with a message",
+        "responses": {
+          "200": {
+            "description": "A successful response"
+          }
+        }
+      }
+    },
+    "/question": {
+      "get": {
+        "description": "Get All Questions from servers",
+        "summary": "Get All Questions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/question/checkAnswer/:id": {
+      "get": {
+        "description": "",
+        "summary": "Check Answer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "answerSelectedByUser",
+            "schema": {
+              "$ref": "#/definitions/user"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {},
+  "responses": {},
+  "parameters": {},
+  "securityDefinitions": {},
+  "tags": []
+}
