@@ -1,34 +1,36 @@
 {
   "info": {
-    "title": "OCEM Quiz",
+    "description": "API documentation for ocemQ",
     "version": "1.0.0",
-    "description": "API for ocemQ"
+    "title": "OCEM Quiz",
+    "contact": {
+      "email": "linkwithdm@gmail.com"
+    }
   },
   "basePath": "/",
   "swagger": "2.0",
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Everything about authentication"
+    }
+  ],
   "paths": {
     "/auth/register": {
       "post": {
+        "tags": ["Authentication"],
         "summary": "User Register",
-        "description": "User Registration",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
-            "in": "path",
-            "name": "name",
-            "type": "string",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "username",
-            "type": "string",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "password",
-            "type": "string",
-            "required": true
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be added to the server",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Register"
+            }
           }
         ],
         "responses": {
@@ -40,22 +42,21 @@
     },
     "/auth/login": {
       "post": {
+        "tags": ["Authentication"],
         "summary": "User Login",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
-            "in": "path",
-            "name": "username",
-            "type": "string",
-            "required": true
-          },
-          {
-            "in": "path",
-            "name": "password",
-            "type": "string",
-            "required": true
+            "in": "body",
+            "name": "body",
+            "description": "User object that needs to be compare to the existing server user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
           }
         ],
-        "description": "Use to return your name with a message",
         "responses": {
           "200": {
             "description": "A successful response"
@@ -65,9 +66,12 @@
     },
     "/question": {
       "get": {
+        "tags": ["Question"],
         "description": "Get All Questions from servers",
         "summary": "Get All Questions",
         "parameters": [],
+        "consumes": ["application/json"],
+        "produces": ["application/xml"],
         "responses": {
           "200": {
             "description": "OK"
@@ -75,22 +79,25 @@
         }
       }
     },
-    "/question/checkAnswer/:id": {
-      "get": {
-        "description": "",
+    "/question/checkAnswer/{id}": {
+      "post": {
+        "tags": ["Question"],
         "summary": "Check Answer",
         "parameters": [
           {
             "in": "path",
             "name": "id",
             "type": "string",
+            "description": "5f4ccac28b0715196c1ebbe3",
             "required": true
           },
           {
             "in": "body",
-            "name": "answerSelectedByUser",
+            "name": "body",
+            "description": "Answer object that needs to be compare to the existing server questions answer",
+            "required": true,
             "schema": {
-              "$ref": "#/definitions/user"
+              "$ref": "#/definitions/Ans"
             }
           }
         ],
@@ -100,11 +107,62 @@
           }
         }
       }
+    },
+    "/scoreboard": {
+      "get": {
+        "tags": ["Scoreboard"],
+        "description": "Get Top Scorer From Server",
+        "summary": "Get Scoreboard",
+        "parameters": [],
+        "consumes": ["application/json"],
+        "produces": ["application/xml"],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
-  "definitions": {},
-  "responses": {},
-  "parameters": {},
-  "securityDefinitions": {},
-  "tags": []
+  "definitions": {
+    "Register": {
+      "type": "object",
+      "required": ["name", "username", "password"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Login": {
+      "type": "object",
+      "required": ["username", "password"],
+      "properties": {
+        "username": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "Ans": {
+      "type": "object",
+      "required": ["userId", "answerSelectedByUser"],
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "answerSelectedByUser": {
+          "type": "string"
+        }
+      }
+    }
+  }
 }

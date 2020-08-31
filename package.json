@@ -12,7 +12,6 @@
     "mongoose": "^5.10.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.4",
-    "swagger-ui": "^3.32.5",
     "swagger-ui-express": "^4.1.4"
   }
 }
