@@ -2,7 +2,7 @@ const express = require("express");
 const logger = require("morgan");
 const app = express();
 //for dev
-//app.set("port", 3333);
+//pp.set("port", 3333);
 app.use(logger("dev"));
 require("./configs/mongoose");
 

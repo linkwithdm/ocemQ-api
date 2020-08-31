@@ -64,6 +64,21 @@
         }
       }
     },
+    "/user": {
+      "get": {
+        "tags": ["User"],
+        "description": "Get All Registered User From Server",
+        "summary": "Get All Registered Users",
+        "parameters": [],
+        "consumes": ["application/json"],
+        "produces": ["application/xml"],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/question": {
       "get": {
         "tags": ["Question"],
