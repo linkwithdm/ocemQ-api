@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const QuestionSchema = new Schema({
+  qid: Number,
   title: {
     type: String,
     required: true,

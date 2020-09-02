@@ -2,7 +2,7 @@ const express = require("express");
 const logger = require("morgan");
 const app = express();
 //for dev
-//pp.set("port", 3333);
+app.set("port", 3333);
 app.use(logger("dev"));
 require("./configs/mongoose");
 
@@ -25,7 +25,7 @@ app.use("/question", questionRouter);
 app.use("/scoreboard", scoreboardRouter);
 
 //port listening
-//for pro
+// //for pro
 var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
 var server_host = process.env.YOUR_HOST || "0.0.0.0";
 app.listen(server_port, server_host, (err, done) => {

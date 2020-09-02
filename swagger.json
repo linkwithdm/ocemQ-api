@@ -94,26 +94,24 @@
         }
       }
     },
-    "/question/checkAnswer/{id}": {
-      "post": {
+    "/question/checkAnswer/{qid}/{answer}": {
+      "get": {
         "tags": ["Question"],
         "summary": "Check Answer",
         "parameters": [
           {
             "in": "path",
-            "name": "id",
-            "type": "string",
-            "description": "5f4ccac28b0715196c1ebbe3",
+            "name": "qid",
+            "type": "number",
+
             "required": true
           },
           {
-            "in": "body",
-            "name": "body",
-            "description": "Answer object that needs to be compare to the existing server questions answer",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/Ans"
-            }
+            "in": "path",
+            "name": "answer",
+            "type": "string",
+
+            "required": true
           }
         ],
         "responses": {
