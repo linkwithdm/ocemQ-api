@@ -4,6 +4,8 @@ const router = express.Router();
 const QuestionModel = require("./../models/question.model");
 const UserModel = require("./../models/user.model");
 const ScoreboardModel = require("./../models/scoreboard.model");
+const QuizHistoryModel = require("./../models/quizhistory.model");
+
 const dbConfig = require("../configs/db.config");
 
 router
@@ -58,129 +60,117 @@ router
   .delete((req, res, next) => {});
 
 router
-  .route("/checkAnswer/:qid/:answer")
+  .route("/checkAnswer/:qid/:answer/:username")
   .get((req, res, next) => {
-    // console.log(req.params.qid);
-    // console.log(req.params.answer);
-
-    QuestionModel.findOne({ qid: req.params.qid })
-      .then((question) => {
-        // console.log(question);
-        if (question) {
-          //console.log("sfsq" + question);
-          if (question.correct_answer_index === req.params.answer) {
-            res.status(200).json({
-              msg: "Correct Answer",
-            });
-          } else {
-            res.status(200).json({
-              msg: "Wrong Answer",
+    username = req.params.username.toLowerCase();
+    //Check User in System
+    UserModel.findOne({ username: username }, { uid: 1, name: 1 })
+      .lean()
+      .exec((err, userinfo) => {
+        if (err) {
+          return next(err);
+        } else {
+          if (!userinfo) {
+            return next({
+              msg: "User doesnot exist in our system",
             });
           }
-        } else {
-          // console.log("sefcnj");
-          return next({
-            msg: "Question not found",
+          // console.log(userinfo);
+
+          //Check Question in System
+
+          QuestionModel.findOne({ qid: req.params.qid }).then((question) => {
+            if (!question) {
+              return next({
+                msg: "Question not found",
+              });
+            }
+            // console.log(question);
+            //Check Question History
+            QuizHistoryModel.find({
+              qid: question.qid,
+              uid: userinfo.uid,
+            }).then((quizhistory) => {
+              console.log(quizhistory);
+              if (quizhistory.length > 0) {
+                return next({
+                  msg: "Already attempt",
+                });
+              } else {
+                if (question.correct_answer_index === req.params.answer) {
+                  //Answer Correct
+                  // console.log("Correct Answer");
+                  //Save in quiz history
+                  const newQuizHistory = new QuizHistoryModel({});
+                  newQuizHistory.qid = question.qid;
+                  newQuizHistory.uid = userinfo.uid;
+                  newQuizHistory.answer = "Correct Answer";
+
+                  newQuizHistory.save((errorrr, saved) => {
+                    if (errorrr) {
+                      errr.msg = "Error While Saving Quiz History";
+                      return next(errr);
+                    }
+                    //Save in scoreboard
+                    ScoreboardModel.findOne({
+                      "person.uid": userinfo.uid,
+                    }).then((result) => {
+                      if (result == null) {
+                        const newScoreboard = new ScoreboardModel({});
+                        newScoreboard.person = userinfo;
+                        newScoreboard.points = 5;
+                        console.log(newScoreboard);
+                        newScoreboard.save(function (errr, done) {
+                          if (errr) {
+                            errr.msg = "Error While Saving Scoreboard";
+                            return next(errr);
+                          }
+                          res.json({
+                            msg: "Correct Answer",
+                            info: done,
+                          });
+                        });
+                      } else {
+                        result.person = userinfo;
+                        result.points = result.points + 5;
+                        result.save(function (err, done) {
+                          if (err) {
+                            errr.msg = "Error While Saving Scoreboard";
+                            return next(err);
+                          }
+                          res.json({
+                            msg: "Correct Answer",
+                            info: done,
+                          });
+                        });
+                      }
+                    });
+                  });
+                } else {
+                  // console.log("Wrong ANswer");
+                  //Save in quiz history
+                  const newQuizHistory = new QuizHistoryModel({});
+                  newQuizHistory.qid = question.qid;
+                  newQuizHistory.uid = userinfo.uid;
+                  newQuizHistory.answer = "Wrong Answer";
+                  newQuizHistory.save((errorrr, saved) => {
+                    if (errorrr) {
+                      errr.msg = "Error While Saving Quiz History";
+                      return next(errr);
+                    }
+                    res.json({
+                      msg: "Wrong Answer",
+                    });
+                  });
+                }
+              }
+            });
           });
         }
-      })
-      .catch((err) => {
-        // console.log("wrrorrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-        console.log(err);
-        next(err);
       });
   })
   .post((req, res, next) => {})
   .put((req, res, next) => {})
   .delete((req, res, next) => {});
-
-// router
-//   .route("/checkAnswer/:id")
-//   .get((req, res, next) => {
-//     console.log(req.params.id);
-//     QuestionModel.findOne({ _id: new dbConfig.oid(req.params.id) })
-//       .then((question) => {
-//         // console.log(question);
-//         if (question) {
-//           //console.log("sfsq" + question);
-//           if (question.correct_answer_index === req.body.answerSelectedByUser) {
-//             userId = req.body.userId;
-//             UserModel.findOne(
-//               { _id: userId },
-//               {
-//                 _id: 1,
-//                 name: 1,
-//               }
-//             )
-//               .lean()
-//               .exec((err, userinfo) => {
-//                 if (err) {
-//                   return next(err);
-//                 } else {
-//                   if (!userinfo) {
-//                     return next({
-//                       msg: "User Doesnot exist in our system",
-//                     });
-//                   }
-//                   userinfo.userId = userinfo._id;
-//                   //  console.log(userinfo);
-//                   ScoreboardModel.findOne({
-//                     "person.userId": userinfo.userId,
-//                   }).then((result) => {
-//                     if (result == null) {
-//                       const newScoreboard = new ScoreboardModel({});
-//                       newScoreboard.person = userinfo;
-//                       newScoreboard.points = 5;
-//                       newScoreboard.save(function (errr, done) {
-//                         if (errr) {
-//                           errr.msg = "Error While Saving Scoreboard";
-//                           return next(errr);
-//                         }
-//                         res.json({
-//                           msg: "Selected answer matched",
-//                           info: done,
-//                         });
-//                       });
-//                     } else {
-//                       result.person = userinfo;
-//                       result.points = result.points + 5;
-//                       result.save(function (err, done) {
-//                         if (err) {
-//                           errr.msg = "Error While Saving Scoreboard";
-//                           return next(err);
-//                         }
-//                         res.json({
-//                           msg: "Selected answer matched",
-//                           info: done,
-//                         });
-//                       });
-//                     }
-//                   });
-//                 }
-//               });
-//             // res.status(200).json({
-//             //   msg: "Selected answer matched",
-//             // });
-//           } else {
-//             return next({
-//               msg: "Selected answer didnot matched",
-//             });
-//           }
-//         } else {
-//           // console.log("sefcnj");
-//           return next({
-//             msg: "Question not found",
-//           });
-//         }
-//       })
-//       .catch((err) => {
-//         // console.log("wrrorrrrrrrrrrrrrrrrrrrrrrrrrrrr");
-//         console.log(err);
-//         next(err);
-//       });
-//   })
-//   .post((req, res, next) => {})
-//   .put((req, res, next) => {})
-//   .delete((req, res, next) => {});
 
 module.exports = router;

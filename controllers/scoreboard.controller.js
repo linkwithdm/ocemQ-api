@@ -7,8 +7,14 @@ const dbConfig = require("../configs/db.config");
 router
   .route("/")
   .get((req, res, next) => {
-    ScoreboardModel.find({})
-      .sort({points: -1})
+    ScoreboardModel.find(
+      {},
+      {
+        __v: 0,
+        _id: 0,
+      }
+    )
+      .sort({ points: -1 })
       .exec((err, data) => {
         if (err) {
           return next(err);

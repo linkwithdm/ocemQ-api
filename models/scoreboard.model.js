@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 
 const ScoreboardSchema = new Schema({
   person: {
-    userId: {
-      type: String,
+    uid: {
+      type: Number,
       required: true,
     },
     name: {

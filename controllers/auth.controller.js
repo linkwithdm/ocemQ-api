@@ -32,6 +32,14 @@ router.post("/login", (req, res, next) => {
     });
 });
 router.post("/register", (req, res, next) => {
+  totalUser = 0;
+  UserModel.find({})
+    .then((tr) => {
+      totalUser = tr.length + 1;
+    })
+    .catch((err) => {
+      next(err);
+    });
   UserModel.findOne({
     username: req.body.username,
   })
@@ -40,10 +48,13 @@ router.post("/register", (req, res, next) => {
         const newUser = new UserModel({});
         newUser.name = req.body.name;
         newUser.username = req.body.username;
+      
+        newUser.uid = totalUser;
         const hash = bcrypt.hashSync(req.body.password, saltRounds);
         newUser.password = hash;
         newUser.save(function (err, done) {
           if (err) {
+            console.log(err);
             err.msg = "Error While Saving User";
             return next(err);
           }
@@ -60,6 +71,7 @@ router.post("/register", (req, res, next) => {
       }
     })
     .catch((err) => {
+      console.log(err);
       next(err);
     });
 });
