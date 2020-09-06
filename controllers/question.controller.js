@@ -6,6 +6,7 @@ const UserModel = require("./../models/user.model");
 const ScoreboardModel = require("./../models/scoreboard.model");
 const QuizHistoryModel = require("./../models/quizhistory.model");
 
+const generateRandomJson = require("./../helpers/generateRandomJson");
 const dbConfig = require("../configs/db.config");
 
 router
@@ -24,6 +25,7 @@ router
             obj.__v = undefined;
             return obj;
           });
+          generateRandomJson(newQ);
           res.status(200).json(newQ);
         } else {
           res.status(200).json({
