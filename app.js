@@ -26,23 +26,23 @@ app.use("/scoreboard", scoreboardRouter);
 
 //port listening
 // //for pro
-var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
-var server_host = process.env.YOUR_HOST || "0.0.0.0";
-app.listen(server_port, server_host, (err, done) => {
-  if (err) {
-    console.log("Error while listening port " + app.get("port") + " >> " + err);
-  } else {
-    console.log("Server is listening at port " + app.get("port"));
-  }
-});
-//for dev
-// app.listen(app.get("port"), (err, done) => {
+// var server_port = process.env.YOUR_PORT || process.env.PORT || 80;
+// var server_host = process.env.YOUR_HOST || "0.0.0.0";
+// app.listen(server_port, server_host, (err, done) => {
 //   if (err) {
 //     console.log("Error while listening port " + app.get("port") + " >> " + err);
 //   } else {
 //     console.log("Server is listening at port " + app.get("port"));
 //   }
 // });
+//for dev
+app.listen(app.get("port"), (err, done) => {
+  if (err) {
+    console.log("Error while listening port " + app.get("port") + " >> " + err);
+  } else {
+    console.log("Server is listening at port " + app.get("port"));
+  }
+});
 app.use((req, res, next) => {
   next({
     msg: "Error",
